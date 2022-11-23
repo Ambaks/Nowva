@@ -4,9 +4,6 @@ import sys
 
 class Home:
   
-        
-        
-
     def getChoice(choice):
         if choice == 0:
             choice = initialWelcome()
@@ -26,15 +23,21 @@ class Home:
                 dataList.append(squat.doSquat())
                 # print(dataList)
                 plt.show()
-        
+
+        if choice == 2:
+            pass
+
+        if choice == 3:
+            pass
+
+        if choice == 4:
+            pass
+
         if choice == 5:
             sys.exit()
 
         return menu()
         
-
-             
-    
 
 
 @staticmethod
@@ -56,15 +59,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-# Greeting
-
-# Pick exercise
-    #Add data to database
-
-# Ask for another exercise
-
