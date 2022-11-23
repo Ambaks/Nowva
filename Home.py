@@ -1,4 +1,5 @@
 import squat_module as sm
+import sideLunge_module as slm
 from matplotlib import pyplot as plt
 import sys
 
@@ -15,14 +16,25 @@ class Home:
     def treatChoice(choice):
         if choice == 1:
             choice = str(input('---------- Quick Exercise ----------\nChoose your exercise:\n - Squat\n - Bench Press\n - Deadlift\n'))
+            
             if choice == 'Squat':
                 reps = int(input('Input target repetition amount: '))
                 squat = sm.Squat(reps)
                 dataList = []
-
                 dataList.append(squat.doSquat())
                 # print(dataList)
                 plt.show()
+
+            if choice == 'Side Lunge':
+                reps = int(input('Input target repetition amount: '))
+                squat = slm.sLunge(reps)
+                dataList = []
+                dataList.append(slm.dosLunge())
+                # print(dataList)
+                plt.show()
+
+                
+            
 
         if choice == 2:
             pass
