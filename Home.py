@@ -1,9 +1,13 @@
+
 import squat_module as sm
 import sideLunge_module as slm
 from matplotlib import pyplot as plt
 import sys
+from user import User
 
-class Home:
+class Home(User):
+    def __init__(self):
+        super().__init__(self, first, last)
   
     def getChoice(choice):
         if choice == 0:
@@ -29,7 +33,7 @@ class Home:
                 reps = int(input('Input target repetition amount: '))
                 squat = slm.sLunge(reps)
                 dataList = []
-                dataList.append(slm.dosLunge())
+                dataList.append(slm.sLunge.dosLunge())
                 # print(dataList)
                 plt.show()
 
@@ -46,6 +50,7 @@ class Home:
             pass
 
         if choice == 5:
+            print("Until next time!")
             sys.exit()
 
         return menu()
@@ -54,12 +59,12 @@ class Home:
 
 @staticmethod
 def initialWelcome():
-    choice = int(input("Hello! Welcome back to your Nowva 0.One! What would you wish to do?\n1. Quick Exercise\n2. My Progress\n3. Start A Workout Plan\n4. Initialization\n"))
+    choice = int(input(f"Hello! Welcome back to your Nowva 0.One! What would you wish to do?\n1. Quick Exercise\n2. My Progress\n3. Start A Workout Plan\n4. Initialization\n5. Exit\n"))
     return choice
 
 @staticmethod
 def menu():
-    choice = int(input("Main Menu:\n1. Quick Exercise\n2. My Progress\n3. Start A Workout Plan\n4. Initialization\n"))
+    choice = int(input("Main Menu:\n1. Quick Exercise\n2. My Progress\n3. Start A Workout Plan\n4. Initialization\n5. Exit\n"))
     return Home.treatChoice(choice)
 
 
