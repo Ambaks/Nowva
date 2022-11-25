@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 
 import PoseEstimationModule as pm
+
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
@@ -73,8 +74,30 @@ class Squat:
             cv2.imshow("Image", img)
             cv2.waitKey(1)
 
-        return self.count, rep_time, plot, set_length, av_rep_length, print(self.repTimes)
+        return addToCsv([self.count, rep_time, plot, set_length, av_rep_length, self.repTimes]), print(self.repTimes)
 
+
+@staticmethod
+def addToCsv(list):
+    from csv import writer
+ 
+# List that we want to add as a new row
+    List = list
+ 
+# Open our existing CSV file in append mode
+# Create a file object for this file
+    with open('data.csv', 'a') as f_object:
+    
+        # Pass this file object to csv.writer()
+        # and get a writer object
+        writer_object = writer(f_object)
+    
+        # Pass the list as an argument into
+        # the writerow()
+        writer_object.writerow(List)
+    
+        # Close the file object
+        f_object.close()
 
 def main():
     perform = Squat()

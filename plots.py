@@ -1,38 +1,83 @@
+import datetime
+import math
+
+import cv2
+import numpy as np
+
 import PoseEstimationModule as pm
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-import datetime
-import cv2
-import mediapipe as mp
+from scipy.signal import find_peaks
 
-cap = cv2.VideoCapture("squats.mp4")
-detector = pm.poseDetector()
-tlist = []
-ylist = []
-def getlists():
-    while True:
-        success, img = cap.read()
-        img = detector.findPose(img, draw=False)
-        lmlist, time, y = detector.findPosition(img, draw=False)
-        print(time)
-        tlist.append(time)
-        ylist.append(y)
-    return tlist, ylist
-print(tlist)
-# fig = plt.figure(figsize=(6, 3))
-#
-#  ln, = plt.plot(time, y, '-')
-#         plt.axis([0, 100, 0, 10])
-#
-#
-# def update(frame):
-#     success, img = cap.read()
-#     img = detector.findPose(img, draw=False)
-#     lmlist, time, y = detector.findPosition(img, draw=False)
-#
-#     ln.set_data(time, y)
-#     return ln,
-#
-#
-# animation = FuncAnimation(fig, update, interval=500)
-# plt.show()
+class sLunge:
+    def __init__(self, set_size):
+        self.ylist = []
+        self.tlist = []
+        self.dir = 0
+        self.count = -.5
+        self.detector = pm.poseDetector()
+        self.rep_start = datetime.datetime.now()
+        self.repTimes = []
+        self.previous_count = -0.5
+        self.set_size = set_size
+
+    def dosLunge(self):
+
+        plt.style.use('fivethirtyeight')
+
+        cap = cv2.VideoCapture('squats.mp4')
+
+
+        while True:
+
+            success, img = cap.read()
+            if success:
+                img = self.detector.findPose(img, draw=False)
+                lmlist = self.detector.findPosition(img, draw=False)
+
+
+                if len(lmlist) != 0:
+
+                    angle = detector.find_angle(img, 24, 26, 28)
+                    per = np.interp(angle,(115, 170),(0, 100))
+
+                    # Check for lunges
+                    if per >= 95:
+                        if self.dir == 0:
+                            self.count += 0.5
+                            self.dir = 1
+
+                    if per <= 7:
+                        if self.dir == 1:
+                            self.count += 0.5
+                            self.dir = 0
+
+                    # Get repetition length
+                    if self.count.is_integer() is True and self.count != self.previous_count:
+                        self.rep_time = datetime.datetime.now() - self.rep_start
+                        self.repTimes.append(int(self.rep_time.seconds) + round(float(self.rep_time.microseconds * 10**-6), 2))
+                        self.rep_start = datetime.datetime.now()
+                        self.previous_count = self.count
+
+                    self.ylist.append(lmlist[24][2])
+                    self.tlist.append(datetime.datetime.now())
+
+
+                cv2.putText(img, f'Reps: {str(int(self.count))}', (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 5)
+            else:
+                plot = pm.poseDetector.plotTimeSeries(self.tlist, self.ylist, 'Squat')
+                rep_time, set_length, av_rep_length = pm.poseDetector.printResults(self.count, self.tlist)
+                self.repTimes.pop(0)
+                break
+
+            cv2.imshow("Image", img)
+            cv2.waitKey(1)
+
+        return self.count, rep_time, plot, set_length, av_rep_length, print(self.repTimes)
+
+
+def main():
+    perform = sLunge()
+    perform.dosLunge()
+
+if __name__ == '__main__':
+    main()
