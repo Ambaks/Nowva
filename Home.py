@@ -66,10 +66,11 @@ def menu():
 
 
 def main():
-    User()
+    user = User()
     choice = 0
     choice = Home.getChoice(choice)
     Home.treatChoice(choice)
+
     
 
 if __name__ == '__main__':

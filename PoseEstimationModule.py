@@ -88,10 +88,7 @@ class poseDetector():
         print(f'Number of reps: {count} reps')
         print(f'Set length: {rep_time.seconds} seconds')
         print(f'Average rep length: {round(rep_time.seconds / count, 2)} seconds')
-        return rep_time, rep_time.seconds, round(rep_time.seconds / count, 2)
-
-    def findJointAngle(self):
-        pass
+        return int(rep_time.seconds), round(rep_time.seconds / count, 2)
 
 
 def main():

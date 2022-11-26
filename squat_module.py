@@ -67,37 +67,51 @@ class Squat:
                 cv2.putText(img, f'Reps: {str(int(self.count))}', (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 5)
             else:
                 plot = pm.poseDetector.plotTimeSeries(self.tlist, self.ylist, 'Squat')
-                rep_time, set_length, av_rep_length = pm.poseDetector.printResults(self.count, self.tlist)
+                set_length, av_rep_length = pm.poseDetector.printResults(self.count, self.tlist)
                 self.repTimes.pop(0)
                 break
 
             cv2.imshow("Image", img)
             cv2.waitKey(1)
 
-        return addToCsv([self.count, rep_time, plot, set_length, av_rep_length, self.repTimes]), print(self.repTimes)
+        return addToCsv([self.count, set_length, av_rep_length, self.repTimes])
 
 
 @staticmethod
 def addToCsv(list):
-    from csv import writer
- 
-# List that we want to add as a new row
-    List = list
- 
-# Open our existing CSV file in append mode
-# Create a file object for this file
-    with open('data.csv', 'a') as f_object:
-    
-        # Pass this file object to csv.writer()
-        # and get a writer object
-        writer_object = writer(f_object)
-    
-        # Pass the list as an argument into
-        # the writerow()
-        writer_object.writerow(List)
-    
-        # Close the file object
-        f_object.close()
+    import os
+    import pandas as pd
+    if os.path.exists('data.csv') == False:
+        df = {}
+        df['Repetitions'] = list[0]
+        df['Set length'] = list[1]
+        df['Average rep length'] = list[2]
+        df['Rep times'] = list[3]
+
+        df = pd.DataFrame(df)
+        df.to_csv('data.csv', sep=',')
+    else:
+        from csv import writer
+        with open('data.csv', 'a') as f_object:
+            writer_object = writer(f_object)
+            writer_object.writerow(list)
+            f_object.close()
+
+@staticmethod
+def addToDatabase(data):
+    import sqlite3
+    con = sqlite3.connect("userData.db")
+    cur = con.cursor()
+    res = cur.execute("SELECT name FROM sqlite_master")
+    if res.fetchone() == None:
+        cur.execute("CREATE TABLE data(Repetitions, Set_length, Average_rep_length, All_rep_lengths)")
+        cur.executemany("INSERT INTO data VALUES(?, ?, ?, ?)", data)
+        con.commit()
+        con.close()
+    else:
+        cur.executemany("INSERT INTO data VALUES(?, ?, ?, ?)", data)
+        con.commit()
+        con.close()
 
 def main():
     perform = Squat()
