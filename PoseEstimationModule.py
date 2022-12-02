@@ -77,10 +77,14 @@ class poseDetector():
         return angle
 
     def plotTimeSeries(x, y, exercise):
+        import io
         fig = plt.figure
         plt.plot_date(x, y)
         plt.title(f'{exercise} Range Of Motion / time')
         plt.gcf().autofmt_xdate()
+        img_buf = io.BytesIO()
+        print('Saved...')
+        plt.savefig(img_buf, format='png')
         return fig
 
     def printResults(count, tlist):

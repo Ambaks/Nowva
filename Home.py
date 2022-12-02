@@ -26,7 +26,7 @@ class Home(User):
                 squat = sm.Squat(reps)
                 dataList = []
                 dataList.append(squat.doSquat())
-                # print(dataList)
+                print(dataList)
                 plt.show()
 
             if choice == 'Side Lunge':
@@ -38,7 +38,8 @@ class Home(User):
                 plt.show()             
 
         if choice == 2:
-            pass
+            from programModule import Program
+            Program.greeting()
 
         if choice == 3:
             pass

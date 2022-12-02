@@ -13,6 +13,7 @@ class Squat:
     def __init__(self, set_size):
         self.ylist = []
         self.tlist = []
+        self.velocityList = []
         self.dir = 0
         self.count = -.5
         self.detector = pm.poseDetector()
@@ -69,33 +70,27 @@ class Squat:
                 plot = pm.poseDetector.plotTimeSeries(self.tlist, self.ylist, 'Squat')
                 set_length, av_rep_length = pm.poseDetector.printResults(self.count, self.tlist)
                 self.repTimes.pop(0)
+                for rep in self.repTimes:
+                    self.velocityList.append(round(171 / rep / 100, 2))
+
+                check_completion(self.count, self.set_size)
+
                 break
 
             cv2.imshow("Image", img)
             cv2.waitKey(1)
 
-        return addToCsv([self.count, set_length, av_rep_length, self.repTimes])
+        return self.count, set_length, av_rep_length, self.repTimes, self.velocityList, plot
 
 
 @staticmethod
-def addToCsv(list):
-    import os
-    import pandas as pd
-    if os.path.exists('data.csv') == False:
-        df = {}
-        df['Repetitions'] = list[0]
-        df['Set length'] = list[1]
-        df['Average rep length'] = list[2]
-        df['Rep times'] = list[3]
-
-        df = pd.DataFrame(df)
-        df.to_csv('data.csv', sep=',')
-    else:
-        from csv import writer
-        with open('data.csv', 'a') as f_object:
-            writer_object = writer(f_object)
-            writer_object.writerow(list)
-            f_object.close()
+def check_completion(count, set_size):
+    if count == set_size:
+        print('Good job! You completed the set!')
+    elif count > set_size:
+        print('That was easy. Add some weight in the next set.')
+    elif count < set_size:
+        print('That was heavy, remove some weight.')
 
 @staticmethod
 def addToDatabase(data):
