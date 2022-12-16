@@ -7,7 +7,7 @@ from user import User
 
 class Home(User):
     def __init__(self):
-        super().__init__(self, first, last)
+        super().__init__(self)
   
     def getChoice(choice):
         if choice == 0:
@@ -18,16 +18,19 @@ class Home(User):
         return choice
     
     def treatChoice(choice):
+        import connector as cn
+
         if choice == 1:
             choice = str(input('---------- Quick Exercise ----------\nChoose your exercise:\n - Squat\n - Bench Press\n - Deadlift\n'))
             
             if choice == 'Squat':
                 reps = int(input('Input target repetition amount: '))
                 squat = sm.Squat(reps)
-                dataList = []
-                dataList.append(squat.doSquat())
-                print(dataList)
-                plt.show()
+                # dataList = []
+                set = squat.doSquat()
+                cn.commit_to_table(set)
+                # print(dataList)
+                # plt.show()
 
             if choice == 'Side Lunge':
                 reps = int(input('Input target repetition amount: '))

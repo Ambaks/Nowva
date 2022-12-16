@@ -1,5 +1,6 @@
 import datetime
 import math
+from set import Set
 
 import cv2
 import numpy as np
@@ -80,7 +81,7 @@ class Squat:
             cv2.imshow("Image", img)
             cv2.waitKey(1)
 
-        return self.count, set_length, av_rep_length, self.repTimes, self.velocityList, plot
+        return Set(self.count, set_length, av_rep_length, self.repTimes, self.velocityList, plot)
 
 
 @staticmethod

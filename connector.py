@@ -1,23 +1,40 @@
-import mysql.connector
-from mysql.connector import Error
 
-try:
-    connection = mysql.connector.connect(host='localhost',
-                                         database='Electronics',
-                                         user='pynative',
-                                         password='pynative@#29')
-    if connection.is_connected():
-        db_Info = connection.get_server_info()
-        print("Connected to MySQL Server version ", db_Info)
-        cursor = connection.cursor()
-        cursor.execute("select database();")
-        record = cursor.fetchone()
-        print("You're connected to database: ", record)
+ 
 
-except Error as e:
-    print("Error while connecting to MySQL", e,'\nyurrrrrr')
-finally:
-    if connection.is_connected():
-        cursor.close()
-        connection.close()
-        print("MySQL connection is closed")
+
+def create_table():
+    import sqlite3
+    conn = sqlite3.connect('userData.db')
+        # Create a cursor object
+    cursor = conn.cursor()
+        # Define the table with 7 columns
+    cursor.execute('''CREATE TABLE data (
+                        id INTEGER PRIMARY KEY,
+                        sets BLOB)''')
+        # Commit the changes to the database
+    conn.commit()
+        # Close the connection
+    
+
+def commit_to_table(set):
+    import sqlite3
+    import pickle
+
+    conn = sqlite3.connect('userData.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='data'")
+
+    if cursor.fetchone():
+        with open('data.pickle', 'wb') as file:
+            data = pickle.dump(set, file)
+        cursor.execute('INSERT INTO data (sets)  VALUES (?)', (data))
+        conn.commit()
+        conn.close()
+    else:
+        with open('data.pickle', 'wb') as file:
+            data = pickle.dump(set, file)
+            create_table()
+        cursor.execute('INSERT INTO data (sets)  VALUES (?)', (data))
+        conn.commit()
+        conn.close()
+
