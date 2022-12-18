@@ -1,6 +1,7 @@
 import datetime
 import math
 from set import Set
+import connector as cn
 
 import cv2
 import numpy as np
@@ -38,7 +39,7 @@ class Squat:
                 lmlist = self.detector.findPosition(img, draw=False)
 
 
-                if len(lmlist) != 0:
+                if len(lmlist):
 
                     angle = self.detector.find_angle(img, 24, 26, 28)
                     per = np.interp(angle,(55, 180),(0, 100))
@@ -81,7 +82,7 @@ class Squat:
             cv2.imshow("Image", img)
             cv2.waitKey(1)
 
-        return Set(self.count, set_length, av_rep_length, self.repTimes, self.velocityList, plot)
+        return Set('Squat', self.count, set_length, self.repTimes, self.velocityList, plot)
 
 
 @staticmethod
@@ -93,25 +94,8 @@ def check_completion(count, set_size):
     elif count < set_size:
         print('That was heavy, remove some weight.')
 
-@staticmethod
-def addToDatabase(data):
-    import sqlite3
-    con = sqlite3.connect("userData.db")
-    cur = con.cursor()
-    res = cur.execute("SELECT name FROM sqlite_master")
-    if res.fetchone() == None:
-        cur.execute("CREATE TABLE data(Repetitions, Set_length, Average_rep_length, All_rep_lengths)")
-        cur.executemany("INSERT INTO data VALUES(?, ?, ?, ?)", data)
-        con.commit()
-        con.close()
-    else:
-        cur.executemany("INSERT INTO data VALUES(?, ?, ?, ?)", data)
-        con.commit()
-        con.close()
 
-def main():
-    perform = Squat()
-    perform.doSquat()
 
 if __name__ == '__main__':
-    main()
+    perform = Squat()
+    cn.commit_to_table(perform.doSquat())

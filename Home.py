@@ -19,6 +19,7 @@ class Home(User):
     
     def treatChoice(choice):
         import connector as cn
+        conn, cursor = cn.connect()
 
         if choice == 1:
             choice = str(input('---------- Quick Exercise ----------\nChoose your exercise:\n - Squat\n - Bench Press\n - Deadlift\n'))
@@ -26,11 +27,14 @@ class Home(User):
             if choice == 'Squat':
                 reps = int(input('Input target repetition amount: '))
                 squat = sm.Squat(reps)
-                # dataList = []
                 set = squat.doSquat()
-                cn.commit_to_table(set)
-                # print(dataList)
-                # plt.show()
+                data = cn.serialize(set)
+                if cn.has_table(cursor, 'data'):
+                    cn.commit_to_table(conn, data)
+                else:
+                    cn.create_table(conn)
+                    cn.commit_to_table(conn, data)
+               
 
             if choice == 'Side Lunge':
                 reps = int(input('Input target repetition amount: '))

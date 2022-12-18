@@ -1,14 +1,24 @@
-def func():
-    i = int(input('1 or 2\n'))
-    return i, func2(i)
+import pickle
+from set import Set
+import connector as cn
 
-def func2(int):
-    if int == 1:
-        print('You passed')
-        return func()
-    else:
-        print('You lost')
-        
-        
+a = Set('Squat', 5, 7, [1,1,1,1,1], [1,1,1,1,1], None)
+conn, cursor = cn.connect()
+# cn.create_table(conn)
+# print(cn.has_table(cursor, 'data'))
 
-func()
+# # data = cn.serialize(a)
+# # print(data)
+# # cn.commit_to_table(conn, data)
+rows = cn.get_all_sets(cursor, 'data')
+
+
+for key, item in rows:
+    obj = pickle.loads(item)
+    obj.get_summary()
+
+# # data.get_summary()
+# key, item = cn.get_last_set(cursor, 'data')
+
+# obj = pickle.loads(item)
+# print(obj.rep_time)
